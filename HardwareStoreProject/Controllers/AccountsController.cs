@@ -1,10 +1,12 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Net;
 using System.Web;
 using System.Web.Mvc;
 using System.Web.Security;
 using HardwareStoreProject.Models;
+using Microsoft.Ajax.Utilities;
 
 namespace HardwareStoreProject.Controllers
 {
@@ -34,13 +36,19 @@ namespace HardwareStoreProject.Controllers
                 return RedirectToAction("Index", "Home");
             }
 
-            ModelState.AddModelError("", "Username or Password is wrong");
+            ModelState.AddModelError("", "Username or Password is wrong or User is not registered");
             return View();
         }
 
         [HttpPost]
-        public ActionResult Signup(UsersTbl userinfo)
+        public ActionResult Signup(UsersTbl userinfo, LoginViewModel credentials)
         {
+            if (string.IsNullOrEmpty(userinfo.Username))
+            {
+                ModelState.AddModelError("", "Please fill every field");
+                return View();
+            }
+
             entity.UsersTbls.Add(userinfo);
             entity.SaveChanges();
             return RedirectToAction("Login");
